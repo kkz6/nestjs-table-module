@@ -1,0 +1,30 @@
+# Table Module Rules
+
+This is a NestJS + Vue 3 data table module. Follow these patterns.
+
+## Creating a Table
+1. TypeORM entity → 2. Table class (extends BaseTable, @TableConfig) → 3. Controller (TableQueryService.execute) → 4. Frontend (<DataTable endpoint="..." />)
+
+## Columns
+TextColumn, NumericColumn, DateColumn, DateTimeColumn, BooleanColumn, BadgeColumn, ImageColumn, ActionColumn
+All support: .sortable(), .searchable(), .toggleable(), .mapAs(fn), .exportAs(fn)
+ActionColumn.make() always goes last.
+
+## Filters
+TextFilter (ILIKE), NumericFilter (comparisons), DateFilter (date comparisons), BooleanFilter (IsTrue/IsFalse), SetFilter (.options([])), TrashedFilter (auto-added with softDeletes)
+All support: .clauses([]), .nullable(), .default(val), .applyUsing(fn)
+
+## Actions
+Action.make('name').asButton().variant(Variant.Destructive).confirm({title}).handle(async (item, repo) => ...)
+Action.make('name').asLink().url((row) => `/path/${row.id}`)
+Action.make('name').bulk() for multi-select actions
+
+## Exports
+Export.make('Name', 'file.xlsx', ExportFormat.Xlsx) — runs async with SSE progress
+
+## Key Files
+- backend/src/ — NestJS module source
+- frontend/src/ — Vue component library
+- skills/ — AI agent reference guides (read these for detailed API)
+- docs/ — Full documentation
+- backend/src/examples/users-table.example.ts — Complete example

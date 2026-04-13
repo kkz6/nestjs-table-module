@@ -1,0 +1,1 @@
+../../skills/creating-a-table/SKILL.md

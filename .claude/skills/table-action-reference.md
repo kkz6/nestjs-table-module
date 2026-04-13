@@ -1,0 +1,1 @@
+../../skills/table-action-reference/SKILL.md

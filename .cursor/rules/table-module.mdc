@@ -1,0 +1,55 @@
+---
+description: Rules for working with the NestJS + Vue table module
+globs: ["backend/**/*.ts", "frontend/**/*.vue", "frontend/**/*.ts"]
+---
+
+# Table Module Rules
+
+## Creating Tables
+
+Always follow this pattern:
+1. TypeORM entity with proper decorators (`@Entity`, `@Column`, `@DeleteDateColumn` if soft deletes)
+2. Table class extending `BaseTable<T>` with `@TableConfig({ resource: Entity })`
+3. Controller using `TableQueryService.execute(table, query)`
+4. Frontend `<DataTable endpoint="/api/resource" />`
+
+## Column Conventions
+
+- Use `TextColumn` for strings, `NumericColumn` for numbers, `DateColumn`/`DateTimeColumn` for dates
+- Use `BadgeColumn` for status fields with `.variant({ value: 'variantName' })`
+- Use `BooleanColumn` with `.trueLabel()/.falseLabel()` for boolean fields
+- Always put `ActionColumn.make()` last in the columns array
+- Mark searchable columns with `.searchable()` and sortable with `.sortable()`
+
+## Filter Conventions
+
+- Match filter type to column type: TextFilter for text, NumericFilter for numbers, DateFilter for dates
+- Use `SetFilter` with `.options([])` for enum/status fields
+- Use `BooleanFilter` for boolean fields
+- All 24 clauses use parameterized queries — never raw SQL
+
+## Action Conventions
+
+- Row actions: `.asLink().url(fn)` for navigation, `.asButton().handle(fn)` for mutations
+- Always add `.confirm({})` for destructive actions
+- Bulk actions must have `.bulk()` — receives string[] of IDs
+- Use `Variant.Destructive` for delete actions, `Variant.Success` for restore
+
+## Exports
+
+- Define with `Export.make(name, fileName, ExportFormat.Xlsx|Csv|Pdf)`
+- Exports run async via SSE — never synchronous for large datasets
+- Use `.dontExport()` on columns that shouldn't appear in exports
+
+## Testing
+
+- All backend tests: `cd backend && npx jest`
+- Column/filter tests mock `qb` as `{ andWhere: jest.fn(), withDeleted: jest.fn() }`
+- Service tests mock TypeORM repositories
+- Controller tests mock services
+
+## Reference
+
+- Detailed skills: `skills/` directory
+- Full docs: `docs/` directory
+- Example table: `backend/src/examples/users-table.example.ts`

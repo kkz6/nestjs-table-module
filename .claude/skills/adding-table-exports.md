@@ -1,0 +1,1 @@
+../../skills/adding-table-exports/SKILL.md

@@ -1,0 +1,1 @@
+../../skills/integrating-table-module/SKILL.md
