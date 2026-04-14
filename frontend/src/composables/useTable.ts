@@ -77,6 +77,13 @@ export function useTable<T = any>(endpoint: string, options: UseTableOptions = {
       const response = await fetch(`${endpoint}?${queryString}`, {
         headers: options.headers,
       });
+      if (response.status === 401) {
+        const { useAuthStore } = await import('~/stores/auth');
+        const authStore = useAuthStore();
+        authStore.logout();
+        navigateTo('/login');
+        return;
+      }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const result: TableResponse<T> = await response.json();
       data.value = result.data;

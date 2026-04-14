@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import type { ActionDef } from '@/types';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import type { ActionDef } from '@/types/table';
 
 defineProps<{
   actions: ActionDef[];
@@ -13,8 +13,14 @@ const emit = defineEmits<{
   action: [action: ActionDef, row: Record<string, any>];
 }>();
 
-function navigateTo(url: string): void {
-  globalThis.window?.location.assign(url);
+const router = useRouter();
+
+function handleAction(action: ActionDef, row: Record<string, any>): void {
+  if (action.type === 'link' && action.url) {
+    router.push(action.url);
+  } else {
+    emit('action', action, row);
+  }
 }
 
 function getVariantClass(variant: string): string {
@@ -30,10 +36,7 @@ function getVariantClass(variant: string): string {
   <div v-if="!asDropdown" class="flex items-center gap-1">
     <template v-for="action in actions" :key="action.name">
       <template v-if="!action.hidden">
-        <a v-if="action.type === 'link' && action.url" :href="action.url" :class="getVariantClass(action.variant)">
-          <Button variant="ghost" size="sm" :disabled="action.disabled">{{ action.label }}</Button>
-        </a>
-        <Button v-else variant="ghost" size="sm" :disabled="action.disabled" :class="getVariantClass(action.variant)" @click="emit('action', action, row)">
+        <Button variant="ghost" size="sm" :disabled="action.disabled" :class="getVariantClass(action.variant)" @click="handleAction(action, row)">
           {{ action.label }}
         </Button>
       </template>
@@ -41,15 +44,17 @@ function getVariantClass(variant: string): string {
   </div>
 
   <DropdownMenu v-else>
-    <template #trigger>
-      <Button variant="ghost" size="icon">
+    <DropdownMenuTrigger as-child>
+      <Button variant="ghost" size="icon-sm">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg>
       </Button>
-    </template>
-    <template v-for="action in actions" :key="action.name">
-      <DropdownMenuItem v-if="!action.hidden" :disabled="action.disabled" @click="action.type === 'link' && action.url ? navigateTo(action.url) : emit('action', action, row)">
-        <span :class="getVariantClass(action.variant)">{{ action.label }}</span>
-      </DropdownMenuItem>
-    </template>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+      <template v-for="action in actions" :key="action.name">
+        <DropdownMenuItem v-if="!action.hidden" :disabled="action.disabled" @click="handleAction(action, row)">
+          <span :class="getVariantClass(action.variant)">{{ action.label }}</span>
+        </DropdownMenuItem>
+      </template>
+    </DropdownMenuContent>
   </DropdownMenu>
 </template>

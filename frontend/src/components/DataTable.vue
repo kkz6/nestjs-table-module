@@ -6,9 +6,9 @@ import { useActions } from '@/composables/useActions';
 import { useExport } from '@/composables/useExport';
 import { useStickyTable } from '@/composables/useStickyTable';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CellRenderer } from '@/components/columns';
-import { AddFilterDropdown, ActiveFilters } from '@/components/filters';
-import { RowActions, BulkActionsDropdown } from '@/components/actions';
+import { CellRenderer } from './columns';
+import { AddFilterDropdown, ActiveFilters } from './filters';
+import { RowActions, BulkActionsDropdown } from './actions';
 import SearchInput from './SearchInput.vue';
 import ToggleColumnsDropdown from './ToggleColumnsDropdown.vue';
 import TablePagination from './TablePagination.vue';
@@ -100,6 +100,17 @@ function handleConfirm() {
         @update:model-value="setSearch"
       />
 
+      <BulkActionsDropdown
+        v-if="hasSelection"
+        :actions="meta?.actions.bulk ?? []"
+        :exports="meta?.exports ?? []"
+        :selected-count="selectedCount"
+        @action="handleBulkAction"
+        @export="handleExport"
+      />
+
+      <div class="flex-1" />
+
       <AddFilterDropdown
         v-if="meta?.filters.length"
         :filters="meta.filters"
@@ -119,15 +130,6 @@ function handleConfirm() {
         :exports="meta.exports"
         @export="handleExport"
       />
-
-      <BulkActionsDropdown
-        v-if="hasSelection"
-        :actions="meta?.actions.bulk ?? []"
-        :exports="meta?.exports ?? []"
-        :selected-count="selectedCount"
-        @action="handleBulkAction"
-        @export="handleExport"
-      />
     </div>
 
     <!-- Active filters -->
@@ -141,13 +143,13 @@ function handleConfirm() {
     />
 
     <!-- Table -->
-    <div class="rounded-xl border bg-card">
+    <div class="rounded-xl border bg-card overflow-hidden">
       <div class="relative overflow-auto">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm" style="border-collapse: collapse; border: none;">
           <thead :class="cn('border-b bg-muted/30', meta?.stickyHeader && headerStuck && 'sticky top-0 z-10 shadow-sm')">
             <tr>
               <th v-if="showCheckboxes" class="w-10 pl-4 pr-2 py-2.5">
-                <Checkbox :checked="allSelected" @update:checked="toggleSelectAll(allIds)" />
+                <Checkbox :model-value="allSelected" @update:model-value="toggleSelectAll(allIds)" />
               </th>
               <th
                 v-for="col in visibleColumnDefs"
@@ -167,7 +169,7 @@ function handleConfirm() {
               </th>
             </tr>
           </thead>
-          <tbody class="divide-y">
+          <tbody class="[&>tr:not(:last-child)]:border-b">
             <tr
               v-for="row in data"
               :key="(row as any).id"
@@ -175,7 +177,7 @@ function handleConfirm() {
               @click="emit('row-click', row)"
             >
               <td v-if="showCheckboxes" class="pl-4 pr-2 py-2" @click.stop>
-                <Checkbox :checked="selectedIds.has(String((row as any).id))" @update:checked="toggleSelect(String((row as any).id))" />
+                <Checkbox :model-value="selectedIds.has(String((row as any).id))" @update:model-value="toggleSelect(String((row as any).id))" />
               </td>
               <td
                 v-for="col in visibleColumnDefs"

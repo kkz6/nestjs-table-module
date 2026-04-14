@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Checkbox } from '@/components/ui/checkbox';
-import type { FilterOption } from '@/types';
+import type { FilterOption } from '@/types/table';
 
 const props = defineProps<{
   value: string;
@@ -31,7 +31,7 @@ function toggle(optValue: string) {
       :key="opt.value"
       class="flex items-center gap-2 text-sm cursor-pointer"
     >
-      <Checkbox :checked="getSelected().includes(opt.value)" @update:checked="toggle(opt.value)" />
+      <Checkbox :model-value="getSelected().includes(opt.value)" @update:model-value="toggle(opt.value)" />
       {{ opt.label }}
     </label>
   </div>

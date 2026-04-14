@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
-import type { PaginationData } from '@/types';
+import type { PaginationData } from '@/types/table';
 
 const props = defineProps<{
   pagination: PaginationData;
@@ -36,7 +36,7 @@ const perPageSelectOptions = computed(() =>
 );
 </script>
 <template>
-  <div class="flex items-center justify-between border-t px-4 py-3">
+  <div class="flex items-center justify-between px-1 pt-4 pb-1">
     <div class="text-sm text-muted-foreground">
       <template v-if="pagination.total > 0">
         Showing {{ pagination.from }} to {{ pagination.to }} of {{ pagination.total }}
@@ -51,7 +51,7 @@ const perPageSelectOptions = computed(() =>
       />
 
       <div v-if="pagination.type === 'full'" class="flex items-center gap-1">
-        <Button variant="outline" size="sm" :disabled="pagination.currentPage <= 1" @click="emit('page', pagination.currentPage - 1)">
+        <Button variant="outline" :disabled="pagination.currentPage <= 1" @click="emit('page', pagination.currentPage - 1)">
           Prev
         </Button>
         <template v-for="p in pages" :key="p">
@@ -60,16 +60,16 @@ const perPageSelectOptions = computed(() =>
             {{ p }}
           </Button>
         </template>
-        <Button variant="outline" size="sm" :disabled="pagination.currentPage >= pagination.lastPage" @click="emit('page', pagination.currentPage + 1)">
+        <Button variant="outline" :disabled="pagination.currentPage >= pagination.lastPage" @click="emit('page', pagination.currentPage + 1)">
           Next
         </Button>
       </div>
 
       <div v-else class="flex items-center gap-1">
-        <Button variant="outline" size="sm" :disabled="pagination.currentPage <= 1" @click="emit('page', pagination.currentPage - 1)">
+        <Button variant="outline" :disabled="pagination.currentPage <= 1" @click="emit('page', pagination.currentPage - 1)">
           Previous
         </Button>
-        <Button variant="outline" size="sm" :disabled="!pagination.nextCursor && pagination.currentPage >= pagination.lastPage" @click="emit('page', pagination.currentPage + 1)">
+        <Button variant="outline" :disabled="!pagination.nextCursor && pagination.currentPage >= pagination.lastPage" @click="emit('page', pagination.currentPage + 1)">
           Next
         </Button>
       </div>
