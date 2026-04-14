@@ -5,7 +5,7 @@ export interface UseTableOptions {
   defaultPerPage?: number;
   debounce?: number;
   syncUrl?: boolean;
-  headers?: Record<string, string>;
+  headers?: Record<string, string> | (() => Record<string, string>);
 }
 
 export function useTable<T = any>(endpoint: string, options: UseTableOptions = {}) {
@@ -74,14 +74,11 @@ export function useTable<T = any>(endpoint: string, options: UseTableOptions = {
     isLoading.value = true;
     try {
       const queryString = buildQueryString();
+      const headers = typeof options.headers === 'function' ? options.headers() : options.headers;
       const response = await fetch(`${endpoint}?${queryString}`, {
-        headers: options.headers,
+        headers,
       });
       if (response.status === 401) {
-        const { useAuthStore } = await import('~/stores/auth');
-        const authStore = useAuthStore();
-        authStore.logout();
-        navigateTo('/login');
         return;
       }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);

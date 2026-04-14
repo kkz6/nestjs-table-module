@@ -13,11 +13,11 @@ const emit = defineEmits<{
   action: [action: ActionDef, row: Record<string, any>];
 }>();
 
-const router = useRouter();
+
 
 function handleAction(action: ActionDef, row: Record<string, any>): void {
   if (action.type === 'link' && action.url) {
-    router.push(action.url);
+    globalThis.window?.location.assign(action.url);
   } else {
     emit('action', action, row);
   }

@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<{
   debounce?: number;
   syncUrl?: boolean;
   tableClass?: string;
-  headers?: Record<string, string>;
+  headers?: Record<string, string> | (() => Record<string, string>);
 }>(), {
   defaultPerPage: 15,
   debounce: 300,

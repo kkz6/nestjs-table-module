@@ -12,6 +12,9 @@ export class TableQueryService {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async execute<T = any>(table: BaseTable<T>, query: TableQueryDto): Promise<TableResponse<T>> {
+    // Parse bracket-notation filters from raw query (e.g., filters[name][contains]=x)
+    const parsedFilters = this.parseFilters(query);
+
     const config = table.getConfig();
     const repo = this.dataSource.getRepository(config.resource);
     const qb = repo.createQueryBuilder('entity');
@@ -25,8 +28,8 @@ export class TableQueryService {
     }
 
     // 3. Apply filters
-    if (query.filters) {
-      this.applyFilters(qb, table, query.filters);
+    if (parsedFilters && Object.keys(parsedFilters).length > 0) {
+      this.applyFilters(qb, table, parsedFilters);
     }
 
     // 4. Apply sorting
@@ -42,6 +45,30 @@ export class TableQueryService {
     const meta = table.toMeta();
 
     return { meta, data, pagination: paginationResult.paginationData };
+  }
+
+  private parseFilters(query: any): Record<string, Record<string, string>> | undefined {
+    // If filters is already a nested object, return it
+    if (query.filters && typeof query.filters === 'object' && !Array.isArray(query.filters)) {
+      // Check if it's already properly nested (e.g., { firstName: { contains: 'x' } })
+      const firstValue = Object.values(query.filters)[0];
+      if (firstValue && typeof firstValue === 'object') {
+        return query.filters;
+      }
+    }
+
+    // Parse bracket-notation from flat query keys: "filters[key][clause]" = "value"
+    const filters: Record<string, Record<string, string>> = {};
+    for (const [key, value] of Object.entries(query)) {
+      const match = key.match(/^filters\[(\w+)]\[(\w+)]$/);
+      if (match) {
+        const [, filterKey, clause] = match;
+        if (!filters[filterKey]) filters[filterKey] = {};
+        filters[filterKey][clause] = value as string;
+      }
+    }
+
+    return Object.keys(filters).length > 0 ? filters : undefined;
   }
 
   private applyEagerLoading(qb: SelectQueryBuilder<any>, table: BaseTable<any>): void {

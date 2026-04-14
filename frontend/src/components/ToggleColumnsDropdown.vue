@@ -34,8 +34,9 @@ function isVisible(col: ColumnDef, visibleColumns: string[]): boolean {
       <DropdownMenuCheckboxItem
         v-for="col in columns.filter(c => c.toggleable)"
         :key="col.key"
-        :checked="isVisible(col, visibleColumns)"
-        @update:checked="emit('toggle', col.key)"
+        :model-value="isVisible(col, visibleColumns)"
+        @update:model-value="emit('toggle', col.key)"
+        @select.prevent
       >
         {{ col.header }}
       </DropdownMenuCheckboxItem>

@@ -35,7 +35,7 @@ function formatClause(c: string): string {
         </button>
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="w-64 p-3">
+    <PopoverContent align="start" :side-offset="8" :collision-padding="16" class="w-64 p-3">
       <div class="space-y-3">
         <Select :model-value="clause" @update:model-value="emit('update', $event, value)">
           <SelectTrigger>

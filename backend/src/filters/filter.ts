@@ -140,7 +140,8 @@ export abstract class Filter {
   // ─── Handler ─────────────────────────────────────────────────────
 
   handle(qb: any, clause: Clause, value: any): void {
-    const attribute = this.attribute;
+    // Prefix with entity alias if not already prefixed (e.g., "firstName" -> "entity.firstName")
+    const attribute = this.attribute.includes('.') ? this.attribute : `entity.${this.attribute}`;
 
     // Handle IsSet / IsNotSet directly
     if (clause === Clause.IsSet) {
