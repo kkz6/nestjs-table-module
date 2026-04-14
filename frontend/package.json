@@ -6,17 +6,29 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kkz6/nestjs-table-module.git",
+    "directory": "frontend"
+  },
+  "keywords": ["vue", "table", "datatable", "shadcn", "component", "admin"],
+  "files": ["dist", "package.json", "README.md"],
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    },
-    "./style.css": "./dist/style.css"
+    }
   },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
+    "prebuild": "rm -rf dist",
+    "prepublishOnly": "npm run build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "type-check": "vue-tsc --noEmit"

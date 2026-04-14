@@ -4,8 +4,21 @@
   "description": "NestJS table module with filtering, sorting, pagination, actions, and exports",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kkz6/nestjs-table-module.git",
+    "directory": "backend"
+  },
+  "keywords": ["nestjs", "table", "typeorm", "filtering", "pagination", "sorting", "datatable", "admin"],
+  "files": ["dist", "package.json", "README.md"],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "nest build",
+    "prebuild": "rm -rf dist",
+    "prepublishOnly": "npm run build",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest",

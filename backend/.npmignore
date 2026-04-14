@@ -1,0 +1,12 @@
+src/
+test/
+node_modules/
+coverage/
+.eslintrc.js
+.prettierrc
+nest-cli.json
+tsconfig.json
+tsconfig.build.json
+jest.config.*
+*.spec.ts
+*.tgz
