@@ -13,6 +13,10 @@ const emit = defineEmits<{
   action: [action: ActionDef, row: Record<string, any>];
 }>();
 
+function navigateTo(url: string): void {
+  globalThis.window?.location.assign(url);
+}
+
 function getVariantClass(variant: string): string {
   const map: Record<string, string> = {
     destructive: 'text-destructive',
@@ -43,7 +47,7 @@ function getVariantClass(variant: string): string {
       </Button>
     </template>
     <template v-for="action in actions" :key="action.name">
-      <DropdownMenuItem v-if="!action.hidden" :disabled="action.disabled" @click="action.type === 'link' && action.url ? (window.location.href = action.url) : emit('action', action, row)">
+      <DropdownMenuItem v-if="!action.hidden" :disabled="action.disabled" @click="action.type === 'link' && action.url ? navigateTo(action.url) : emit('action', action, row)">
         <span :class="getVariantClass(action.variant)">{{ action.label }}</span>
       </DropdownMenuItem>
     </template>
