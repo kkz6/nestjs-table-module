@@ -141,53 +141,55 @@ function handleConfirm() {
     />
 
     <!-- Table -->
-    <div class="rounded-md border">
+    <div class="rounded-xl border bg-card">
       <div class="relative overflow-auto">
-        <table class="w-full caption-bottom text-sm">
-          <thead :class="cn('border-b', meta?.stickyHeader && headerStuck && 'sticky top-0 z-10 bg-background shadow-sm')">
+        <table class="w-full text-sm">
+          <thead :class="cn('border-b bg-muted/30', meta?.stickyHeader && headerStuck && 'sticky top-0 z-10 shadow-sm')">
             <tr>
-              <th v-if="showCheckboxes" class="w-10 px-4 py-3">
+              <th v-if="showCheckboxes" class="w-10 pl-4 pr-2 py-2.5">
                 <Checkbox :checked="allSelected" @update:checked="toggleSelectAll(allIds)" />
               </th>
               <th
                 v-for="col in visibleColumnDefs"
                 :key="col.key"
-                :class="cn('h-10 px-4 font-medium text-muted-foreground', col.headerClass, `text-${col.alignment}`)"
+                :class="cn('px-4 py-2.5 text-xs font-medium text-muted-foreground', col.headerClass, `text-${col.alignment}`)"
                 class="cursor-default"
                 @click="col.sortable && setSort(col.key)"
               >
-                <div class="flex items-center gap-1" :class="{ 'cursor-pointer select-none': col.sortable }">
+                <div class="flex items-center gap-1" :class="{ 'cursor-pointer select-none hover:text-foreground': col.sortable }">
                   {{ col.header }}
-                  <template v-if="col.sortable && sortColumn === col.key">
-                    <svg v-if="sortDirection === 'asc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 15 7-7 7 7" /></svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 9-7 7-7-7" /></svg>
+                  <template v-if="col.sortable">
+                    <svg v-if="sortColumn === col.key && sortDirection === 'asc'" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 15 7-7 7 7" /></svg>
+                    <svg v-else-if="sortColumn === col.key && sortDirection === 'desc'" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m19 9-7 7-7-7" /></svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-30"><path d="m7 15 5 5 5-5M7 9l5-5 5 5" /></svg>
                   </template>
                 </div>
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="divide-y">
             <tr
               v-for="row in data"
               :key="(row as any).id"
-              class="border-b transition-colors hover:bg-muted/50 cursor-pointer"
+              class="transition-colors hover:bg-muted/30 cursor-pointer"
               @click="emit('row-click', row)"
             >
-              <td v-if="showCheckboxes" class="px-4 py-3">
+              <td v-if="showCheckboxes" class="pl-4 pr-2 py-2" @click.stop>
                 <Checkbox :checked="selectedIds.has(String((row as any).id))" @update:checked="toggleSelect(String((row as any).id))" />
               </td>
               <td
                 v-for="col in visibleColumnDefs"
                 :key="col.key"
-                :class="cn('px-4 py-3', col.cellClass, `text-${col.alignment}`)"
+                :class="cn('px-4 py-2.5', col.cellClass, `text-${col.alignment}`)"
               >
-                <RowActions
-                  v-if="col.type === 'action' && (row as any)._actions"
-                  :actions="(row as any)._actions"
-                  :row="row as any"
-                  :as-dropdown="col.asDropdown"
-                  @action="handleRowAction"
-                />
+                <div v-if="col.type === 'action' && (row as any)._actions" @click.stop>
+                  <RowActions
+                    :actions="(row as any)._actions"
+                    :row="row as any"
+                    :as-dropdown="col.asDropdown"
+                    @action="handleRowAction"
+                  />
+                </div>
                 <CellRenderer v-else :value="(row as any)[col.key]" :column="col" />
               </td>
             </tr>
@@ -196,8 +198,8 @@ function handleConfirm() {
 
         <EmptyState v-if="isEmpty && !isLoading" :config="meta?.emptyState" />
 
-        <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-background/50">
-          <div class="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-card/60 backdrop-blur-sm">
+          <div class="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       </div>
     </div>
