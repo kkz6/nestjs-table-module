@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, SelectQueryBuilder } from 'typeorm';
 import { BaseTable } from '../base-table';
 import { TableQueryDto } from '../dto/table-query.dto';
@@ -8,7 +9,7 @@ import { isWithoutComparisonClause, Clause } from '../enums';
 
 @Injectable()
 export class TableQueryService {
-  constructor(private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async execute<T = any>(table: BaseTable<T>, query: TableQueryDto): Promise<TableResponse<T>> {
     const config = table.getConfig();

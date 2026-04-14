@@ -1,4 +1,4 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { Module, DynamicModule, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TableViewEntity } from './entities/table-view.entity';
 import { ExportJobEntity } from './entities/export-job.entity';
@@ -12,10 +12,12 @@ import { TableViewController } from './controllers/table-view.controller';
 import { TableRegistry } from './table-registry';
 import { BaseTable } from './base-table';
 
+@Global()
 @Module({})
 export class TableModule {
   static forRoot(tables?: BaseTable<any>[]): DynamicModule {
     return {
+      global: true,
       module: TableModule,
       imports: [
         TypeOrmModule.forFeature([TableViewEntity, ExportJobEntity]),

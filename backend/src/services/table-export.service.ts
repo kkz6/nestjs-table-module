@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ExportJobEntity } from '../entities/export-job.entity';
 import { TableSseService } from './table-sse.service';
@@ -16,7 +16,7 @@ export class TableExportService {
     private jobRepo: Repository<ExportJobEntity>,
     private sseService: TableSseService,
     private registry: TableRegistry,
-    private dataSource: DataSource,
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   async createJob(table: any, exportName: string, query: any, body: any, userId: number) {
