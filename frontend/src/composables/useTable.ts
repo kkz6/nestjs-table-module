@@ -5,6 +5,7 @@ export interface UseTableOptions {
   defaultPerPage?: number;
   debounce?: number;
   syncUrl?: boolean;
+  headers?: Record<string, string>;
 }
 
 export function useTable<T = any>(endpoint: string, options: UseTableOptions = {}) {
@@ -73,7 +74,9 @@ export function useTable<T = any>(endpoint: string, options: UseTableOptions = {
     isLoading.value = true;
     try {
       const queryString = buildQueryString();
-      const response = await fetch(`${endpoint}?${queryString}`);
+      const response = await fetch(`${endpoint}?${queryString}`, {
+        headers: options.headers,
+      });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const result: TableResponse<T> = await response.json();
       data.value = result.data;

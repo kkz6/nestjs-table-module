@@ -23,6 +23,7 @@
     "typeorm": "^0.3.0"
   },
   "dependencies": {
+    "@kkmodules/nestjs-table": "file:../../../../../tmp/kkmodules-nestjs-table-1.0.0.tgz",
     "exceljs": "^4.4.0",
     "pdfkit": "^0.15.0"
   },

@@ -23,12 +23,18 @@ const props = withDefaults(defineProps<{
   debounce?: number;
   syncUrl?: boolean;
   tableClass?: string;
+  headers?: Record<string, string>;
 }>(), {
   defaultPerPage: 15,
   debounce: 300,
   syncUrl: true,
   tableClass: '',
+  headers: () => ({}),
 });
+
+const emit = defineEmits<{
+  'row-click': [row: any];
+}>();
 
 const {
   data, meta, pagination, isLoading, isEmpty,
@@ -39,6 +45,7 @@ const {
   defaultPerPage: props.defaultPerPage,
   debounce: props.debounce,
   syncUrl: props.syncUrl,
+  headers: props.headers,
 });
 
 const {
@@ -163,7 +170,8 @@ function handleConfirm() {
             <tr
               v-for="row in data"
               :key="(row as any).id"
-              class="border-b transition-colors hover:bg-muted/50"
+              class="border-b transition-colors hover:bg-muted/50 cursor-pointer"
+              @click="emit('row-click', row)"
             >
               <td v-if="showCheckboxes" class="px-4 py-3">
                 <Checkbox :checked="selectedIds.has(String((row as any).id))" @update:checked="toggleSelect(String((row as any).id))" />
